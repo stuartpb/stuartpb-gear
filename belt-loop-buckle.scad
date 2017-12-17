@@ -1,12 +1,13 @@
 //!OpenSCAD
 // title      : Belt Loop Buckle
 // author     : Stuart P. Bentley (@stuartpb)
-// version    : 0.1.0
+// version    : 0.2.0
 // file       : belt-loop-buckle.scad
 
 frameWidth = 6;
 innerFrameWidth = 4;
 slotWidth = 2;
+centerSlotWidth = 4;
 beltWidth = 38;
 loopWidth = 12;
 buckleThickness = 3;
@@ -30,7 +31,7 @@ linear_extrude(buckleThickness) round2d(1,.999) difference () {
     translate([-frameWidth/2,0]) square([frameWidth,slotWidth], true);
     translate([-frameWidth-slotWidth/2,0]) square([slotWidth,beltWidth], true);
   }
-  square([loopWidth,slotWidth],true);
+  square([loopWidth,centerSlotWidth],true);
   translate([0, beltWidth/2]) square([loopWidth,slotWidth],true);
   translate([0, -beltWidth/2]) square([loopWidth,slotWidth],true);
   translate([-loopWidth/2+slotWidth/2, beltWidth/4]) square([slotWidth,beltWidth/2],true);
