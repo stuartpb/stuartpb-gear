@@ -1,20 +1,21 @@
 //!OpenSCAD
 // title      : Belt Loop Buckle
 // author     : Stuart P. Bentley (@stuartpb)
-// version    : 0.3.0
+// version    : 0.3.1
 // file       : belt-loop-buckle.scad
 
 frameWidth = 6;
 innerFrameWidth = 4;
 fabricThickness = 2;
-centerSlotThickness = 4;
 beltWidth = 38;
 beltThickness = 5;
+loopLength = 38;
 loopWidth = 12;
+loopRetainerWidth = 15;
 buckleThickness = 3;
 
 overallWidth = frameWidth*2+innerFrameWidth*2+beltThickness*2+fabricThickness+loopWidth;
-overallHeight = frameWidth*2+beltWidth;
+overallHeight = frameWidth*2+max(beltWidth, loopLength);
 
 module round2d(OR=3,IR=1){
     offset(OR)offset(-IR-OR)offset(IR)children();
@@ -32,9 +33,9 @@ linear_extrude(buckleThickness) round2d(1,.999) difference () {
     translate([-frameWidth/2,0]) square([frameWidth,fabricThickness], true);
     translate([-frameWidth-beltThickness/2,0]) square([beltThickness,beltWidth], true);
   }
-  square([loopWidth,centerSlotThickness],true);
-  translate([0, beltWidth/2]) square([loopWidth,fabricThickness],true);
-  translate([0, -beltWidth/2]) square([loopWidth,fabricThickness],true);
-  translate([-loopWidth/2+fabricThickness/2, beltWidth/4]) square([fabricThickness,beltWidth/2],true);
-  translate([loopWidth/2-fabricThickness/2, -beltWidth/4]) square([fabricThickness,beltWidth/2],true);
+  square([loopWidth, loopLength - loopRetainerWidth*2 - fabricThickness * 2], true);
+  translate([0, loopLength/2]) square([loopWidth,fabricThickness],true);
+  translate([0, -loopLength/2]) square([loopWidth,fabricThickness],true);
+  translate([-loopWidth/2+fabricThickness/2, loopLength/4]) square([fabricThickness,loopLength/2],true);
+  translate([loopWidth/2-fabricThickness/2, -loopLength/4]) square([fabricThickness,loopLength/2],true);
 }
