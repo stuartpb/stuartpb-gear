@@ -3,13 +3,13 @@
 ware_gauge = 1.5;
 
 // The length of the "wings" of the ware.
-ware_depth = 5;
+ware_depth = 4;
 
 // The distance between the "wings" of the ware.
-ware_width = 13.8;
+ware_width = 14;
 
 // The increase in distance between the "wings" from the inside to outside.
-wing_spread = 0.5;
+wing_spread = 1;
 
 // The diameter of the chopsticks.
 stick_diameter = 7.25;
@@ -20,7 +20,7 @@ inner_round_radius = 1.5;
 /* [Parameters] */
 
 // How much space to leave around the held pieces.
-tolerance = 0.25;
+tolerance = 0.5;
 
 // How much material to hold the pieces with.
 thickness = 2;
