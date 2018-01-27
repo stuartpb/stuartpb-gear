@@ -6,7 +6,7 @@ ware_gauge = 1.5;
 ware_depth = 4;
 
 // The distance between the "wings" of the ware.
-ware_width = 14;
+ware_width = 14.5;
 
 // The increase in distance between the "wings" from the inside to outside.
 wing_spread = 1;
@@ -20,7 +20,7 @@ inner_round_radius = 1.5;
 /* [Parameters] */
 
 // How much space to leave around the held pieces.
-tolerance = 0.5;
+tolerance = 0.325;
 
 // How much material to hold the pieces with.
 thickness = 2;
