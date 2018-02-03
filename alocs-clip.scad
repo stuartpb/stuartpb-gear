@@ -49,12 +49,12 @@ $fn = 90;
 ware_circle_radius = ware_circle_diameter/2;
 stick_radius = stick_diameter/2;
 
-module three_holder () {
+module ware_holder () {
   ware_circle_x = ware_circle_radius + thickness/2;
   ware_circle_outer_radius = ware_circle_radius+thickness;
   ware_circle_inner_radius = ware_circle_radius;
   
-  linear_extrude(total_length) difference() {
+  translate([0, ware_circle_x]) linear_extrude(total_length) difference() {
     union() {
       translate([-ware_circle_x, 0]) circle(r=ware_circle_outer_radius);
       translate([ware_circle_x, 0]) circle(r=ware_circle_outer_radius);
@@ -77,15 +77,24 @@ module stick_holder() {
   stick_x = ware_circle_diameter + thickness + stick_radius;
   stick_outer_radius = stick_radius+thickness+tolerance;
   stick_inner_radius = stick_radius+tolerance;
-  translate([stick_x, 0]) linear_extrude(total_length) difference () {
-    circle(r=stick_outer_radius);
-    circle(r=stick_inner_radius);
-    rotate([0, 0, stick_space_angle]) translate([stick_inner_radius + thickness/2,0])
-      square([stick_inner_radius*2*stick_space,stick_inner_radius],center=true);
+  intersection () {
+    rotate([-2,0,0]) translate([stick_x, 0, -total_length/2])
+      linear_extrude(total_length*2) difference () {
+        circle(r=stick_outer_radius);
+        circle(r=stick_inner_radius);
+        rotate([0, 0, stick_space_angle]) translate([stick_inner_radius + thickness/2,0])
+          square([stick_inner_radius*2*stick_space,stick_inner_radius],center=true);
+    }
+    translate([stick_x,0,total_length/2])
+      cube([4*stick_outer_radius, 4*stick_outer_radius, total_length], center=true);
   }
 }
 
-translate([0,-(ware_circle_radius+thickness/2)]) three_holder();
-translate([0,ware_circle_radius+thickness/2]) three_holder();
+ware_holder();
+difference() {
+  mirror([0,1,0]) ware_holder();
+  translate([0,0,total_length/2])
+    cube([2*ware_circle_radius + thickness, 4*ware_circle_radius, 2*total_length], center=true);
+}
 stick_holder();
 mirror([1,0,0]) stick_holder();
