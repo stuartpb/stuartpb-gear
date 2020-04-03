@@ -1,40 +1,61 @@
-//watchband by isaac budmen @ibudmen
+//!OpenSCAD
+// Watch clasp by Stuart P. Bentley (https://stuartpb.com/)
+// Originally based on a design by isaac budmen @ibudmen:
+//   https://www.thingiverse.com/thing:87132
 
-// Width of strap?
-strap_width = 21.8; // [8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,24,26]
-// Length of strap?
-// NOTE_ This is actually the outer radius
-strap_length = 24; // [22,24,26,28,30,32,34,36,38,40,42]
+/* [Strap] */
 
-//Other variables
+// The radius of the strap (before assembly).
+strap_radius = 24; // [12:36]
+// The width of the strap (between the arms of the watch).
+strap_width = 21.8;
+// The thickness of the strap material.
 strap_thickness = 0.8;
-pin_radius = 1.1; // Spring pin diameter divided by 2
-pin_thickness = 0.8;
-latch_radius = 1.4;
-latch_thickness = 1.2;
-latch_play = 0.1;
-latch_strap_play = 0.1;
-notch_length = 2;
-notch_width = 1.4;
+
+// The degree to be subtracted from each end of the strap.
 separation_angle = 12;
 
-strap_end = strap_length * cos(12);
-piece_offset = strap_length * sin(12);
+/* [Barholds] */
 
-notch_depth = 2*(pin_radius+pin_thickness);
-//WHERE THE MAGIC HAPPENS
-union(){
+// The thickness of the material surrounding the spring bars.
+barhold_thickness = 0.8;
+// The radius of the holes for the spring bars.
+barhole_radius = 1.1;
+// How deep to cut the notches for access to the spring bars.
+notch_length = 2;
+// How wide to make the notches to access the spring bars.
+notch_width = 1.4;
+
+/* [Latch] */
+
+// The radius of the inside of the latch.
+latch_radius = 1.4;
+// The thickness of the outside of the latch.
+latch_thickness = 1.2;
+// How much the radius of the smaller latch piece should be.
+latch_play = 0.1;
+// How much wider than the strap thickness the outside latch's opening should be.
+latch_strap_play = 0.1;
+
+/* [Hidden] */
+
+strap_end = strap_radius * cos(separation_angle);
+piece_offset = strap_radius * sin(separation_angle);
+
+notch_depth = 2*(barhole_radius+barhold_thickness);
+
+union() {
   band();
-  pins(); 
+  barholds(); 
   latch();
 }
 
-module pins(){
+module barholds(){
   difference(){
     translate([-piece_offset,-strap_end,0])
-      cylinder(strap_width,r=pin_radius+pin_thickness,$fn = 50,center=true);
+      cylinder(strap_width,r=barhole_radius+barhold_thickness,$fn = 50,center=true);
     translate([-piece_offset,-strap_end,0])
-      cylinder(strap_width+2,r=pin_radius,$fn = 50,center=true);
+      cylinder(strap_width+2,r=barhole_radius,$fn = 50,center=true);
     translate([-piece_offset,-strap_end,strap_width/2-notch_length]) rotate(-separation_angle)
       translate([-notch_width/2,0,0]) cube([notch_width,notch_depth,notch_length+1]);
     translate([-piece_offset,-strap_end,-strap_width/2-1]) rotate(-separation_angle)
@@ -43,9 +64,9 @@ module pins(){
 
   difference(){
     translate([piece_offset,strap_end,0])
-      cylinder(strap_width,r=pin_radius+pin_thickness,$fn = 50,center=true);
+      cylinder(strap_width,r=barhole_radius+barhold_thickness,$fn = 50,center=true);
     translate([piece_offset,strap_end,0])
-      cylinder(strap_width+2,r=pin_radius,$fn = 50,center=true);
+      cylinder(strap_width+2,r=barhole_radius,$fn = 50,center=true);
       
     translate([piece_offset,strap_end,strap_width/2-notch_length]) rotate(180-separation_angle)
       translate([-notch_width/2,0,0]) cube([notch_width,notch_depth,notch_length+1]);
@@ -56,27 +77,30 @@ module pins(){
 
 module latch() {
   difference(){
+    // outside latch - body
     translate([piece_offset,-strap_end,0])
-      cylinder(strap_width,r=latch_radius+latch_thickness,center=true,$fn = 50); //outside latch - body  
+      cylinder(strap_width,r=latch_radius+latch_thickness,center=true,$fn = 50);
+    // outside latch - clearing cylinder for pin
     translate([piece_offset,-strap_end,0])
-      cylinder(strap_width+3,r=latch_radius,center=true,$fn = 50); // //outside latch - clearing cylinder for pin
+      cylinder(strap_width+3,r=latch_radius,center=true,$fn = 50);
+    // clearing cube for band
     translate([piece_offset,-strap_end,0]) rotate([0,0,separation_angle])
       translate([-(latch_radius + latch_thickness)/2,0,0])
         cube([latch_radius + latch_thickness,strap_thickness+2*latch_strap_play,30],center=true);
-     // clearing cube for band
   }
-    
+  
+  // inside latch pin
   translate([-piece_offset,strap_end,0])
-    cylinder(strap_width,r=latch_radius-latch_play,center=true,$fn = 50); // inside latch pin
+    cylinder(strap_width,r=latch_radius-latch_play,center=true,$fn = 50); 
 }
 
 module band(){
   difference(){ 
-    cylinder(strap_width,r=strap_length+strap_thickness/2,center=true, $fn=180);
-    cylinder(strap_width+2,r=strap_length-strap_thickness/2,center=true, $fn=180);
+    cylinder(strap_width,r=strap_radius+strap_thickness/2,center=true, $fn=180);
+    cylinder(strap_width+2,r=strap_radius-strap_thickness/2,center=true, $fn=180);
     
     // strip separators
-    translate([pin_radius,strap_length,0]) cube(size = [2*piece_offset+pin_radius,strap_length,24],center=true);
-    translate([(latch_radius+latch_play-pin_radius)/2,-strap_length,0]) cube(size = [2*piece_offset+latch_radius+latch_play+pin_radius,strap_length,24],center=true);
+    translate([barhole_radius,strap_radius,0]) cube(size = [2*piece_offset+barhole_radius,strap_radius,24],center=true);
+    translate([(latch_radius+latch_play-barhole_radius)/2,-strap_radius,0]) cube(size = [2*piece_offset+latch_radius+latch_play+barhole_radius,strap_radius,24],center=true);
   }
 }
